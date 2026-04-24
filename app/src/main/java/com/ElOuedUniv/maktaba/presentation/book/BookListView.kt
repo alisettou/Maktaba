@@ -16,12 +16,15 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
 import com.ElOuedUniv.maktaba.data.model.Book
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -88,24 +91,34 @@ fun BookListView(
 @Composable
 fun BookCard(book: Book, onClick: () -> Unit) {
     Card(
-        modifier = Modifier.fillMaxWidth().aspectRatio(0.65f).clickable(onClick = onClick),shape = RoundedCornerShape(12.dp),
+        modifier = Modifier.fillMaxWidth().aspectRatio(0.65f).clickable(onClick = onClick),
+        shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            Box(
-                modifier = Modifier.fillMaxSize().background(
-                    Brush.verticalGradient(listOf(
-                        MaterialTheme.colorScheme.primaryContainer,
-                        MaterialTheme.colorScheme.secondaryContainer
-                    ))
+            if (book.imageUri != null) {
+                AsyncImage(
+                    model = book.imageUri,
+                    contentDescription = book.title,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(12.dp))
                 )
-            ) {
-                Text(
-                    text = book.title.first().toString(),
-                    style = MaterialTheme.typography.displayLarge,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.3f),
-                    modifier = Modifier.align(Alignment.Center)
-                )
+            } else {
+                Box(
+                    modifier = Modifier.fillMaxSize().background(
+                        Brush.verticalGradient(listOf(
+                            MaterialTheme.colorScheme.primaryContainer,
+                            MaterialTheme.colorScheme.secondaryContainer
+                        ))
+                    )
+                ) {
+                    Text(
+                        text = book.title.first().toString(),
+                        style = MaterialTheme.typography.displayLarge,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.3f),
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
             }
 
             Box(
